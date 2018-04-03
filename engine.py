@@ -1,11 +1,11 @@
 class FEL:
-    def schedule(self, event, timestamp):
+    def schedule(self, event):
         """
         Schedules an event into the FEL.
         :param event: the event to schedule
         :param timestamp: the timestamp of the event to schedule
         """
-        self.priority_queue.append((event, timestamp))
+        self.priority_queue.append((event, event.timestamp))
         self.priority_queue.sort(key=lambda pair: pair[1])
 
     def remove(self):

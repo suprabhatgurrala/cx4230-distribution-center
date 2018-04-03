@@ -1,34 +1,24 @@
-from random import random
+from random import expovariate
 
 import engine
-from worker import Worker
 from delivery_vehicle import DeliveryVehicle
-from package import Package
-from events import Arrival
+from event_handlers import Arrival
+from warehouse import Warehouse
+from worker import Worker
 
-def initialize_package_arrivals():
-    """
-    Method to generate package arrivals
-    :return: a list of packages and their arrival times
-    """
-    pass
+num_workers = 10
+num_vehicles = 3
+max_packages = 3
 
-def main():
-    num_workers = 10
-    num_vehicles = 3
-    num_packages = 500
+workers = [Worker() for i in range(num_workers)]
+vehicles = [DeliveryVehicle(200) for i in range(num_vehicles)]
+# package_arrivals = [Package() for i in range(num_packages)]
 
-    workers = [Worker() for i in range(num_workers)]
-    vehicles = [DeliveryVehicle(200) for i in range(num_vehicles)]
-    # package_arrivals = [Package() for i in range(num_packages)]
+fel = engine.FEL()
+warehouse = Warehouse(workers, vehicles, max_packages)
+arrival_time = int(expovariate(1.0 / 7))
+fel.schedule(Arrival(arrival_time, fel, warehouse))
+engine.run_sim(fel)
 
-    fel = engine.FEL()
-    packages_arrivals = initialize_package_arrivals()
-
-    arrival_time = int(random.expovariate(1.0 / 7))
-    # fel.schedule()
-    engine.run_sim(fel)
-
-    # print stats about simulation here
-
-main()
+# print stats about simulation here
+warehouse.print_stats()

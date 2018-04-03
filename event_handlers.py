@@ -1,4 +1,5 @@
-from random import random
+from random import expovariate, random
+from package import Package
 
 
 class Event:
@@ -35,20 +36,20 @@ class Event:
 
 
 class Arrival(Event):
-    def __init__(self, timestamp, fel, warehouse, package):
+    def __init__(self, timestamp, fel, warehouse):
         super().__init__(timestamp, fel, warehouse)
-        self.package = package
         self.warehouse = warehouse
 
     # schedules a process event
     def handle(self):
-        self.package.arrival_date = self.timestamp
+        package = Package()
+        package.arrival_date = self.timestamp
         self.warehouse.num_packages += 1
-        self.fel.schedule(Process(self.timestamp + 1, self.fel, self.package, self.warehouse))
+        self.fel.schedule(Process(self.timestamp + 1, self.fel, self.warehouse, package))
 
         # if there are more packages, schedule the next package arrival
         if self.warehouse.num_packages < self.warehouse.max_packages:
-            self.fel.schedule(Arrival(self.timestamp + int(random.expovariate(1.0 / 7)), self.fel, self.warehouse, self.package))
+            self.fel.schedule(Arrival(self.timestamp + int(expovariate(1.0 / 7)), self.fel, self.warehouse))
 
 
 class Process(Event):
@@ -66,7 +67,7 @@ class Process(Event):
 
         if len(free_workers) == 0:
             # No free workers, schedule another process event delayed by some time
-            self.fel.schedule(Process(self.timestamp + 1, self.fel, self.package, self.warehouse))
+            self.fel.schedule(Process(self.timestamp + 1, self.fel, self.warehouse, self.package))
 
         else:
             if self.worker is None:
@@ -77,12 +78,13 @@ class Process(Event):
             else:
                 worker = self.worker
 
-            if random.random() < worker.reliability:
+            if random() < worker.reliability:
                 # Successfully processed package
                 self.fel.schedule(Pack(self.timestamp + worker.efficiency, self.fel, self.warehouse, self.package, worker))
             else:
                 # Did not successfully process package, reassign process to same worker
-                self.fel.schedule(Process(self.timestamp + worker.efficiency, self.fel, self.package, self.warehouse, worker=worker))
+                self.fel.schedule(Process(self.timestamp + worker.efficiency, self.fel, self.warehouse, self.package, worker=worker))
+
 
 class Pack(Event):
     def __init__(self, timestamp, fel, warehouse, package, worker):
@@ -118,6 +120,7 @@ class Departure(Event):
     # Schedules the first delivery event after 20 min travel time
     def handle(self):
         self.fel.schedule(Delivery(self.timestamp + 20, self.fel, self.warehouse, self.vehicle))
+
 
 class Delivery(Event):
 

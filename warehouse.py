@@ -14,3 +14,6 @@ class Warehouse:
 
     def get_free_vehicles(self):
         return [w for w in self.vehicles if w.is_free]
+
+    def print_stats(self):
+        print("Done.")

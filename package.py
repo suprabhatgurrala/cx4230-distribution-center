@@ -1,7 +1,3 @@
-import warehouse
-import main
-
-
 class Package:
     """
     Object to represent a package
