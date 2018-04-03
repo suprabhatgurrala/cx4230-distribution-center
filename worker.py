@@ -5,7 +5,7 @@ class Worker:
         Object to represent a warehouse worker
         """
 
-    def __init__(self):
+    def __init__(self, mean_mistake_prob=.1, mean_efficiency=10):
         """
         Initialization function
         :param reliability: how often a warehouse worker makes a mistake that results in a package requiring rerouting
