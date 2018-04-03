@@ -2,15 +2,15 @@ class Warehouse:
     """
     Object to represent a warehouse
     """
-
-    def __init__(self):
+    def __init__(self, workers, vehicles, max_packages):
         # Initialization function
-        pass
+        self.workers = workers
+        self.vehicles = vehicles
+        self.num_packages = 0
+        self.max_packages = max_packages
 
+    def get_free_workers(self):
+        return [w for w in self.workers if w.is_free]
 
-def arrival_handler(params):
-    """
-    Method to handle an arrival event
-    """
-    pass
-
+    def get_free_vehicles(self):
+        return [w for w in self.vehicles if w.is_free]
