@@ -13,10 +13,10 @@ class Worker:
         :param idle_time: records how long the worker spends awaiting a package to be routed
         """
 
-        self.reliability = random.expovariate(1.0 / .1) # .1 is the desired mean mistake probability
-        if self.reliability > .95:
-            self.reliability = .95
-        self.efficiency = random.expovariate(1.0 / 10) # 10 minutes is the desired mean routing time
+        self.reliability = 1 - random.expovariate(1.0 / .1) # .1 is the desired mean mistake probability
+        if self.reliability < .5:
+            self.reliability = .5
+        self.efficiency = int(random.expovariate(1.0 / 10)) # 10 minutes is the desired mean routing time
 
         self.idle_time = 0
         self.is_free = True
