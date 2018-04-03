@@ -8,7 +8,7 @@ from worker import Worker
 
 num_workers = 10
 num_vehicles = 3
-max_packages = 3
+max_packages = 500
 
 workers = [Worker() for i in range(num_workers)]
 vehicles = [DeliveryVehicle(200) for i in range(num_vehicles)]
