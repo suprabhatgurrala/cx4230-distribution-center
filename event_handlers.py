@@ -43,6 +43,7 @@ class Arrival(Event):
     # schedules a process event
     def handle(self):
         package = Package()
+        self.warehouse.processed_packages.append(package)
         package.arrival_date = self.timestamp
         self.warehouse.num_packages += 1
         self.fel.schedule(Process(self.timestamp + 1, self.fel, self.warehouse, package))
@@ -101,12 +102,12 @@ class Pack(Event):
         if len(free_vehicles) == 0:
             # No free vehicles, wait an hour and try again
             # TODO: Find a better way to do this
-            self.fel.schedule(Pack(self.timestamp + 60, self.fel, self.warehouse, self.package))
+            self.fel.schedule(Pack(self.timestamp + 60, self.fel, self.warehouse, self.package, self.worker))
         else:
             vehicle = free_vehicles[0]
             # Add package to the vehicle
             vehicle.add_package(self.package)
-            if vehicle.is_full():
+            if vehicle.is_full() or self.warehouse.num_packages == self.warehouse.max_packages:
                 # Vehicle is full, Schedule a departure event and mark as not free
                 vehicle.is_free = False
                 self.fel.schedule(Departure(self.timestamp, self.fel, self.warehouse, vehicle))
