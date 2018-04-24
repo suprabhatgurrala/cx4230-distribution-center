@@ -81,7 +81,7 @@ class Process(Event):
 
             if random() < worker.reliability:
                 # Successfully processed package
-                is_delivery = random() < 1
+                is_delivery = random() < .75
                 self.fel.schedule(Pack(self.timestamp + worker.efficiency, self.fel, self.warehouse, self.package, worker, is_delivery))
             else:
                 # Did not successfully process package, reassign process to same worker
