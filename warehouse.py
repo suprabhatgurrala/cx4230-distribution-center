@@ -21,7 +21,11 @@ class Warehouse:
 
     def print_stats(self):
         print("Processed {} packages:".format(self.num_packages))
-        avg_package_delivery_time = statistics.mean([p.delivery_date - p.arrival_date for p in self.processed_packages])
+        delivery_times = []
+        for p in self.processed_packages:
+            if p.delivery_date is not None:
+                delivery_times.append(p.delivery_date - p.arrival_date)
+        avg_package_delivery_time = statistics.mean(delivery_times)
         print("Average package delivery time: {:.2f} minutes.".format(avg_package_delivery_time))
         avg_worker_idle = statistics.mean([w.idle_time for w in self.workers])
         print("{} workers were idle for an average of {:.2f} minutes.".format(len(self.workers), avg_worker_idle))
