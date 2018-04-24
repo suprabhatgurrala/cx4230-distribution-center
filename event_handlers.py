@@ -115,9 +115,9 @@ class Pack(Event):
             if vehicle.is_full() or (self.warehouse.num_packages == self.warehouse.max_packages and len(vehicle.package_list) > 0):
                 # Vehicle is full, Schedule a departure event and mark as not free
                 # vehicle.is_free = False
-                if (is_delivery):
+                if (self.is_delivery):
                     self.fel.schedule(Departure(self.timestamp, self.fel, self.warehouse, vehicle))
-                else:   	
+                else:
                     self.fel.schedule(TransportVehicleDeparture(self.timestamp, self.fel, self.warehouse, vehicle))
 
 
@@ -168,7 +168,7 @@ class TransportVehicleDeparture(Event):
         super().__init__(timestamp, fel, warehouse)
         self.transport_vehicle = transport_vehicle
 
-    # Schedules the first delivery event after 120 min travel time                                                               
+    # Schedules the first delivery event after 120 min travel time
     def handle(self):
         self.fel.schedule(Unload(self.timestamp + 120, self.fel, self.warehouse, self.transport_vehicle))
 
@@ -180,12 +180,12 @@ class Unload(Event):
 
     # stats
     def handle(self):
-        # Remove all the packages                                                                                                
+        # Remove all the packages
         while len(self.transport_vehicle.package_list) > 0:
             package = self.transport_vehicle.package_list.pop()
             package.delivery_date = self.timestamp
 
-        # Truck is empty, send it back to warehouse                                                                              
+        # Truck is empty, send it back to warehouse
         self.fel.schedule(TransportVehicleReturn(self.timestamp + 120, self.fel, self.warehouse, self.transport_vehicle))
 
 
