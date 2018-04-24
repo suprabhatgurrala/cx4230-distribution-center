@@ -115,8 +115,10 @@ class Pack(Event):
             if vehicle.is_full() or (self.warehouse.num_packages == self.warehouse.max_packages and len(vehicle.package_list) > 0):
                 # Vehicle is full, Schedule a departure event and mark as not free
                 # vehicle.is_free = False
-                self.fel.schedule(Departure(self.timestamp, self.fel, self.warehouse, vehicle))
-                # TODO: IF the vehicle a transport vehicle, schedule the appropriate event
+                if (is_delivery):
+                    self.fel.schedule(Departure(self.timestamp, self.fel, self.warehouse, vehicle))
+                else:   	
+                    self.fel.schedule(TransportVehicleDeparture(self.timestamp, self.fel, self.warehouse, vehicle))
 
 
 class Departure(Event):
