@@ -15,15 +15,19 @@ class Warehouse:
         self.processed_packages = []
 
     def get_free_workers(self):
+        # Returns the first available worker
         return [w for w in self.workers if w.is_free]
 
     def get_free_delivery_vehicle(self):
+        # Returns the first available delivery vehicle
         return [w for w in self.delivery_vehicles if w.is_free]
 
     def get_free_transport_vehicle(self):
+        # Returns the first transport vehicle
         return [w for w in self.transport_vehicles if w.is_free]
 
     def print_stats(self):
+        # Prints average delivery time and average idle times
         print("Processed {} packages:".format(self.num_packages))
         delivery_times = []
         for p in self.processed_packages:

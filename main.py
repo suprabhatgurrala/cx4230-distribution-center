@@ -4,16 +4,17 @@ from random import expovariate
 import engine
 from delivery_vehicle import DeliveryVehicle
 from event_handlers import Arrival
-from transportvehicle import TransportVehicle
+from transport_vehicle import TransportVehicle
 from warehouse import Warehouse
 from worker import Worker
 
 num_workers = 10
 num_vehicles = 4
-max_packages = 500
+max_packages = 1000
 
 
-def getopts(argv):
+# Parse command line arguments
+def get_opts(argv):
     opts = {}  # Empty dictionary to store key-value pairs.
     while argv:  # While there are arguments left to parse...
         if argv[0][0] == '-':  # Found a "-name value" pair.
@@ -22,7 +23,7 @@ def getopts(argv):
     return opts
 
 
-args = getopts(sys.argv)
+args = get_opts(sys.argv)
 if '-w' in args:
     try:
         num_workers = int(args['-w'])
@@ -49,7 +50,10 @@ transport_vehicle_capacity = 3000
 
 package_arrival_interval = 7 # min
 
+# Initialize worker list
 workers = [Worker(mean_mistake_prob=worker_error_rate, mean_efficiency=worker_efficiency) for i in range(num_workers)]
+
+# Initialize vehicle lists
 delivery_vehicles = []
 transport_vehicles = []
 for i in range(num_vehicles):
@@ -59,12 +63,13 @@ for i in range(num_vehicles):
     else:
         delivery_vehicles.append(DeliveryVehicle(delivery_vehicle_capacity))
 
+# Begin simulation
 fel = engine.FEL()
 warehouse = Warehouse(workers, delivery_vehicles, transport_vehicles, max_packages)
+# Schedule first arrival event
 arrival_time = int(expovariate(1.0 / package_arrival_interval))
 fel.schedule(Arrival(arrival_time, fel, warehouse))
 engine.run_sim(fel)
 
-# print stats about simulation here
+# print stats about simulation
 warehouse.print_stats()
-print("Simulation ran for", fel.now, "minutes")
