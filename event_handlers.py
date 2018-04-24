@@ -81,7 +81,7 @@ class Process(Event):
 
             if random() < worker.reliability:
                 # Successfully processed package
-                is_delivery = random() < 0.75
+                is_delivery = random() < 1
                 self.fel.schedule(Pack(self.timestamp + worker.efficiency, self.fel, self.warehouse, self.package, worker, is_delivery))
             else:
                 # Did not successfully process package, reassign process to same worker
@@ -115,9 +115,10 @@ class Pack(Event):
             if vehicle.is_full() or (self.warehouse.num_packages == self.warehouse.max_packages and len(vehicle.package_list) > 0):
                 # Vehicle is full, Schedule a departure event and mark as not free
                 # vehicle.is_free = False
-
-                self.fel.schedule(Departure(self.timestamp, self.fel, self.warehouse, vehicle))
-                # TODO: IF the vehicle a transport vehicle, schedule the appropriate event
+                if (self.is_delivery):
+                    self.fel.schedule(Departure(self.timestamp, self.fel, self.warehouse, vehicle))
+                else:   	
+                    self.fel.schedule(TransportVehicleDeparture(self.timestamp, self.fel, self.warehouse, vehicle))
 
 class Departure(Event):
     def __init__(self, timestamp, fel, warehouse, vehicle):
@@ -141,15 +142,16 @@ class Delivery(Event):
         if len(self.vehicle.package_list) == 1:
             print("Last package")
 
-        package = self.vehicle.package_list.pop()
-        package.delivery_date = self.timestamp
-
-        # If there are more packages, schedule next delivery
         if len(self.vehicle.package_list) > 0:
-            self.fel.schedule(Delivery(self.timestamp + 2, self.fel, self.warehouse, self.vehicle))
-        else:
-            # Truck is empty, send it back to warehouse
-            self.fel.schedule(VehicleReturn(self.timestamp + 20, self.fel, self.warehouse, self.vehicle))
+            package = self.vehicle.package_list.pop()
+            package.delivery_date = self.timestamp
+
+            # If there are more packages, schedule next delivery
+            if len(self.vehicle.package_list) > 0:
+                self.fel.schedule(Delivery(self.timestamp + 2, self.fel, self.warehouse, self.vehicle))
+            else:
+                # Truck is empty, send it back to warehouse
+                self.fel.schedule(VehicleReturn(self.timestamp + 20, self.fel, self.warehouse, self.vehicle))
 
 
 class VehicleReturn(Event):
