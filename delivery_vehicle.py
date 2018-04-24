@@ -7,13 +7,20 @@ class DeliveryVehicle:
         """
         Initialization function
         :param type: the type of vehicle Delivery or Transport
-        :param capacity: number of packages this vehicle can transport
+        :param capacity: total size value this vehicle can transport
         """
         self.capacity = capacity
+
+        # Represents the packages currently stored in this vehicle, awaiting delivery
         self.package_list = []
+
+        # Indicates whether this vehicle can accept more packages
         self.is_free = True
 
     def is_full(self):
+        """
+        returns whether or not this vehicle has reached capacity
+        """
         return not self.is_free
 
     def add_package(self, package):
