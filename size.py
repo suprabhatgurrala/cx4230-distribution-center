@@ -8,18 +8,19 @@ mapping = {
     "OVERSIZE" : 15
 }
 
+
 def numericSize(size):
     return mapping[size]
 
 
-def getSize(prob=random.random()):
-    if prob < .30: # 30% chance
+def get_size(prob=random.random()):
+    if prob < .30:  # 30% chance
         return "ENVELOPE"
-    elif prob < .60: # 30% chance
+    elif prob < .60:  # 30% chance
         return "SMALL"
-    elif prob < .80: # 20% chance
+    elif prob < .80:  # 20% chance
         return "MEDIUM"
-    elif  prob < .95: # 15% chance
+    elif prob < .95:  # 15% chance
         return "LARGE"
-    else: # 5% chance
+    else:  # 5% chance
         return "OVERSIZE"

@@ -106,7 +106,6 @@ class Pack(Event):
         # Find a free vehicle, if no vehicle is available, wait and try again
         if len(free_vehicles) == 0:
             # No free vehicles, wait an hour and try again
-            # TODO: Find a better way to do this
             self.fel.schedule(Pack(self.timestamp + 60, self.fel, self.warehouse, self.package, self.worker, self.is_delivery))
         else:
             vehicle = free_vehicles[0]
@@ -119,6 +118,7 @@ class Pack(Event):
                     self.fel.schedule(Departure(self.timestamp, self.fel, self.warehouse, vehicle))
                 else:   	
                     self.fel.schedule(TransportVehicleDeparture(self.timestamp, self.fel, self.warehouse, vehicle))
+
 
 class Departure(Event):
     def __init__(self, timestamp, fel, warehouse, vehicle):
@@ -136,12 +136,7 @@ class Delivery(Event):
         super().__init__(timestamp, fel, warehouse)
         self.vehicle = vehicle
 
-    #stats
     def handle(self):
-        # Remove the first package off the package list
-        if len(self.vehicle.package_list) == 1:
-            print("Last package")
-
         if len(self.vehicle.package_list) > 0:
             package = self.vehicle.package_list.pop()
             package.delivery_date = self.timestamp
@@ -178,7 +173,6 @@ class Unload(Event):
         super().__init__(timestamp, fel, warehouse)
         self.transport_vehicle = transport_vehicle
 
-    # stats
     def handle(self):
         # Remove all the packages
         while len(self.transport_vehicle.package_list) > 0:

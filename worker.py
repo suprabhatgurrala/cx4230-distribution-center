@@ -1,16 +1,16 @@
 import random
 
+
 class Worker:
-    """
-        Object to represent a warehouse worker
-        """
+    # Object to represent a warehouse worker
 
     def __init__(self, mean_mistake_prob=.1, mean_efficiency=10):
         """
         Initialization function
-        :param reliability: how often a warehouse worker makes a mistake that results in a package requiring rerouting
-        :param efficiency: how long in minutes a worker spends routing a package on average
-        :param idle_time: records how long the worker spends awaiting a package to be routed
+
+        reliability: how often a warehouse worker makes a mistake that results in a package requiring rerouting
+        efficiency: how long in minutes a worker spends routing a package on average
+        idle_time: records how long the worker spends awaiting a package to be routed
         """
 
         self.reliability = 1 - random.expovariate(1.0 / .1) # .1 is the desired mean mistake probability

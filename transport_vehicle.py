@@ -6,7 +6,7 @@ class TransportVehicle:
     def __init__(self, capacity):
         """
         Initialization function
-        :param capacity: number of packages this vehicle can transport
+        :param capacity: total volume of packages this vehicle can transport
         """
         self.capacity = capacity
         self.package_list = []
@@ -17,7 +17,7 @@ class TransportVehicle:
 
     def add_package(self, package):
         """
-        param x: number of packages to add
+        param package: package to add
         """
 
         amount_loaded = sum(item.size for item in self.package_list)
@@ -26,6 +26,3 @@ class TransportVehicle:
             self.is_free = False
 
         self.package_list.append(package)
-
-
-
