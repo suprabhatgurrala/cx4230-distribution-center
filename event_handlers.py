@@ -109,7 +109,7 @@ class Pack(Event):
             vehicle.add_package(self.package)
             if vehicle.is_full() or self.warehouse.num_packages == self.warehouse.max_packages:
                 # Vehicle is full, Schedule a departure event and mark as not free
-                vehicle.is_free = False
+                # vehicle.is_free = False
                 self.fel.schedule(Departure(self.timestamp, self.fel, self.warehouse, vehicle))
 
 

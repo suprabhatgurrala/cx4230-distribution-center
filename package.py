@@ -6,7 +6,7 @@ class Package:
     def __init__(self, priority=None, size=None, address=None):
         # Initialization function
         self.priority = priority
-        self.size = size
+        self.size = Size.numericSize(Size.getSize())
         self.address = address
         self.arrival_date = None
         self.delivery_date = None
