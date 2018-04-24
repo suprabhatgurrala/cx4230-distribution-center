@@ -1,5 +1,5 @@
 # Distribution Center Simulator
-##Project 2 for CX 4230
+**Project 2 for CX 4230**
 
 A discrete event simulator written in Python 3.6 to model the delivery of packages from a distribution center.
 
