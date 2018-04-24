@@ -9,7 +9,7 @@ from warehouse import Warehouse
 from worker import Worker
 
 num_workers = 10
-num_vehicles = 3
+num_vehicles = 4
 max_packages = 500
 
 
