@@ -150,3 +150,35 @@ class VehicleReturn(Event):
 
     def handle(self):
         self.vehicle.is_free = True
+        
+class TransportVehicleDeparture(Event):
+    def __init__(self, timestamp, fel, warehouse, transport_vehicle):
+        super().__init__(timestamp, fel, warehouse)
+        self.transport_vehicle = transport_vehicle
+
+    # Schedules the first delivery event after 120 min travel time                                                               
+    def handle(self):
+        self.fel.schedule(Unload(self.timestamp + 120, self.fel, self.warehouse, self.transport_vehicle))
+
+class Unload(Event):
+    def __init__(self, timestamp, fel, warehouse, transport_vehicle):
+        super().__init__(timestamp, fel, warehouse)
+        self.transport_vehicle = transport_vehicle
+
+    #stats                                                                                                                       
+    def handle(self):
+        # Remove all the packages                                                                                                
+        while len(self.transport_vehicle.package_list) > 0:
+            package = self.transport_vehicle.package_list.pop()
+            package.delivery_date = self.timestamp
+
+        # Truck is empty, send it back to warehouse                                                                              
+        self.fel.schedule(TransportVehicleReturn(self.timestamp + 120, self.fel, self.warehouse, self.transport_vehicle))
+
+class TransportVehicleReturn(Event):
+        def __init__(self, timestamp, fel, warehouse, transport_vehicle):
+        super().__init__(timestamp, fel, warehouse)
+        self.transport_vehicle = transport_vehicle
+
+    def handle(self):
+        self.transport_vehicle.is_free = True
