@@ -81,36 +81,42 @@ class Process(Event):
 
             if random() < worker.reliability:
                 # Successfully processed package
-                self.fel.schedule(Pack(self.timestamp + worker.efficiency, self.fel, self.warehouse, self.package, worker))
+                is_delivery = random() < 0.75
+                self.fel.schedule(Pack(self.timestamp + worker.efficiency, self.fel, self.warehouse, self.package, worker, is_delivery))
             else:
                 # Did not successfully process package, reassign process to same worker
                 self.fel.schedule(Process(self.timestamp + worker.efficiency, self.fel, self.warehouse, self.package, worker=worker))
 
 
 class Pack(Event):
-    def __init__(self, timestamp, fel, warehouse, package, worker):
+    def __init__(self, timestamp, fel, warehouse, package, worker, is_delivery):
         super().__init__(timestamp, fel, warehouse)
         self.warehouse = warehouse
         self.package = package
         self.worker = worker
+        self.is_delivery = is_delivery
 
     def handle(self):
         self.worker.is_free = True
-        free_vehicles = self.warehouse.get_free_vehicles()
+        if self.is_delivery:
+            free_vehicles = self.warehouse.get_free_delivery_vehicle()
+        else:
+            free_vehicles = self.warehouse.get_free_transport_vehicle()
 
         # Find a free vehicle, if no vehicle is available, wait and try again
         if len(free_vehicles) == 0:
             # No free vehicles, wait an hour and try again
             # TODO: Find a better way to do this
-            self.fel.schedule(Pack(self.timestamp + 60, self.fel, self.warehouse, self.package, self.worker))
+            self.fel.schedule(Pack(self.timestamp + 60, self.fel, self.warehouse, self.package, self.worker, self.is_delivery))
         else:
             vehicle = free_vehicles[0]
             # Add package to the vehicle
             vehicle.add_package(self.package)
-            if vehicle.is_full() or self.warehouse.num_packages == self.warehouse.max_packages:
+            if vehicle.is_full() or (self.warehouse.num_packages == self.warehouse.max_packages and len(vehicle.package_list) > 0):
                 # Vehicle is full, Schedule a departure event and mark as not free
                 # vehicle.is_free = False
                 self.fel.schedule(Departure(self.timestamp, self.fel, self.warehouse, vehicle))
+                # TODO: IF the vehicle a transport vehicle, schedule the appropriate event
 
 
 class Departure(Event):
@@ -132,6 +138,9 @@ class Delivery(Event):
     #stats
     def handle(self):
         # Remove the first package off the package list
+        if len(self.vehicle.package_list) == 1:
+            print("Last package")
+
         package = self.vehicle.package_list.pop()
         package.delivery_date = self.timestamp
 

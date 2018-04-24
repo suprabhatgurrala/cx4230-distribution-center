@@ -50,16 +50,17 @@ transport_vehicle_capacity = 3000
 package_arrival_interval = 7 # min
 
 workers = [Worker(mean_mistake_prob=worker_error_rate, mean_efficiency=worker_efficiency) for i in range(num_workers)]
-vehicles = []
+delivery_vehicles = []
+transport_vehicles = []
 for i in range(num_vehicles):
     # Assuming a fleet of vehicles has 3 delivery vehicles for every transport vehicle.
     if i % 4 == 3:
-        vehicles.append(TransportVehicle(transport_vehicle_capacity))
+        transport_vehicles.append(TransportVehicle(transport_vehicle_capacity))
     else:
-        vehicles.append(DeliveryVehicle(delivery_vehicle_capacity))
+        delivery_vehicles.append(DeliveryVehicle(delivery_vehicle_capacity))
 
 fel = engine.FEL()
-warehouse = Warehouse(workers, vehicles, max_packages)
+warehouse = Warehouse(workers, delivery_vehicles, transport_vehicles, max_packages)
 arrival_time = int(expovariate(1.0 / package_arrival_interval))
 fel.schedule(Arrival(arrival_time, fel, warehouse))
 engine.run_sim(fel)

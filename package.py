@@ -1,3 +1,5 @@
+import size as package_size
+
 class Package:
     """
     Object to represent a package
@@ -6,7 +8,7 @@ class Package:
     def __init__(self, priority=None, size=None, address=None):
         # Initialization function
         self.priority = priority
-        self.size = Size.numericSize(Size.getSize())
+        self.size = package_size.numericSize(package_size.getSize())
         self.address = address
         self.arrival_date = None
         self.delivery_date = None

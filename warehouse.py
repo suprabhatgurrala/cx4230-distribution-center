@@ -5,10 +5,11 @@ class Warehouse:
     """
     Object to represent a warehouse
     """
-    def __init__(self, workers, vehicles, max_packages):
+    def __init__(self, workers, delivery_vehicles, transport_vehicles, max_packages):
         # Initialization function
         self.workers = workers
-        self.vehicles = vehicles
+        self.delivery_vehicles = delivery_vehicles
+        self.transport_vehicles = transport_vehicles
         self.num_packages = 0
         self.max_packages = max_packages
         self.processed_packages = []
@@ -16,8 +17,11 @@ class Warehouse:
     def get_free_workers(self):
         return [w for w in self.workers if w.is_free]
 
-    def get_free_vehicles(self):
-        return [w for w in self.vehicles if w.is_free]
+    def get_free_delivery_vehicle(self):
+        return [w for w in self.delivery_vehicles if w.is_free]
+
+    def get_free_transport_vehicle(self):
+        return [w for w in self.transport_vehicles if w.is_free]
 
     def print_stats(self):
         print("Processed {} packages:".format(self.num_packages))

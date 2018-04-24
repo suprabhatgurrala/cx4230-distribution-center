@@ -13,18 +13,17 @@ class DeliveryVehicle:
         self.package_list = []
         self.is_free = True
 
-
     def is_full(self):
-        return not is_free
+        return not self.is_free
 
     def add_package(self, package):
         """
         param x: number of packages to add
         """
 
-        amount_loaded = sum(Size.numericSize(item.size) for item in self.package_list)
+        amount_loaded = sum(item.size for item in self.package_list)
 
-        if amount_loaded + package.size >= capacity:
+        if amount_loaded + package.size >= self.capacity:
             is_free = False
 
         self.package_list.append(package)
